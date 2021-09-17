@@ -33,7 +33,7 @@ void add_pairs(void);
 void sort_pairs(void);
 void lock_pairs(void);
 void print_winner(void);
-bool checkPair(int);
+bool checkPair(int, int);
 
 int main(int argc, string argv[])
 {
@@ -103,7 +103,7 @@ bool vote(int rank, string name, int ranks[])
     // TODO
     for (int i = 0; i < candidate_count; i++)
     {
-        if (strcmp(candidates[i],name) == 0)
+        if (strcmp(candidates[i], name) == 0)
         {
             ranks[rank] = i;
             return true;
@@ -120,29 +120,27 @@ void record_preferences(int ranks[])
     for (int i = 0; i < candidate_count; i++) //for the number of ranks given, for the ith rank
     {
 
-        for(int j = 1; j < candidate_count - i; j++) //for number of ranks lower than ith rank
+        for (int j = 1; j < candidate_count - i; j++) //for number of ranks lower than ith rank
         {
             preferences[ranks[i]][ranks[i + j]]++;
-            printf("%i", preferences[i][i + j]);
         }
-        printf("\n");
     }
 }
 // Record pairs of candidates where one is preferred over the other
 void add_pairs(void)
 {
     // TODO
-    for(int i = 0; i < candidate_count; i ++)
+    for (int i = 0; i < candidate_count; i ++)
     {
-        for(int j = 0; j < candidate_count; j ++)
+        for (int j = 0; j < candidate_count; j ++)
         {
-            if(preferences[i][j + i] > preferences[j + i][i])
+            if (preferences[i][j + i] > preferences[j + i][i])
             {
                 pairs[pair_count].winner = i;
                 pairs[pair_count].loser = j + i;
                 pair_count ++;
             }
-            else if(preferences[j + i][i] > preferences[i][j + i])
+            else if (preferences[j + i][i] > preferences[i][j + i])
             {
                 pairs[pair_count].winner = j + i;
                 pairs[pair_count].loser = i;
@@ -150,7 +148,6 @@ void add_pairs(void)
             }
 
         }
-        printf("%i", pair_count);
     }
 }
 
@@ -158,9 +155,9 @@ void add_pairs(void)
 void sort_pairs(void)
 {
     // TODO
-    for(int i = 0; i < pair_count; i++)
+    for (int i = 0; i < pair_count; i++)
     {
-        for(int j = 0 + i; j < pair_count; j++)
+        for (int j = 0 + i; j < pair_count; j++)
         {
             pair current = pairs[i];
             if (preferences[pairs[i].winner] - preferences[pairs[i].loser] > preferences[pairs[j].winner] - preferences[pairs[j].loser])
@@ -178,43 +175,67 @@ void sort_pairs(void)
 void lock_pairs(void)
 {
     // TODO
-    for(int i = 0; i < pair_count; i ++)
+    for (int i = 0; i < pair_count; i++) //looping through the pairs
     {
-        for(int j = 0; j < pair_count; j ++)
+        int j = pairs[i].loser;
+        if (checkPair(pairs[i].winner, j)) //
         {
-            if(pairs[j + 1].loser == pairs[j].winner && locked[pairs[j].winner][pairs[i].loser == true])
-            {
-                locked[pairs[j].winner][pairs[j].loser] = false;
-                break;
-            }
-            else
-            {
-                locked[pairs[j].winner][pairs[j].loser] = true;
-            }
+            locked[pairs[i].winner][j] = true;
+        }
+        else
+        {
+            locked[pairs[i].winner][j] = false;
         }
     }
 
 }
 //recursion function
-// bool checkPair(n)
-// {
-//     int i = 0;
-//     if(pairs[n].loser == locked[i][n])
-//     {
-//         return false;
-//     }
-//     else
-//     {
-//         n += 1;
-//         i += 1;
-//         checkPair(n);
-//         return true;
-//     }
-// }
-// Print the winner of the election
+bool checkPair(i, j)
+{
+    for (int x = 0; x < candidate_count; x ++) //looping through each candidate in ith row
+    {
+        if (locked[x][i]) // x == iterator, i stays constant in these iterations
+        {
+            if (j == x)
+            {
+                return false;
+            }
+            return checkPair(x, j); //j = loser of i?
+        }
+
+    }
+    return true;
+}
+//Print the winner of the election
 void print_winner(void)
 {
     // TODO
-    return;
+    int current = 0;
+    int top[pair_count];
+    int found = 0;
+    bool flag = false;
+
+
+    for (int i = 0; i < candidate_count; i ++)
+    {
+        flag = false;
+        for (int j = 0; j < candidate_count; j ++)
+        {
+            if (locked[j][i] == true)
+            {
+                flag = true;
+            }
+
+        }
+        if (flag == false)
+        {
+            string source = candidates[i];
+            printf("%s\n", source);
+
+        }
+
+    }
+
+
 }
 
