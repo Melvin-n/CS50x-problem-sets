@@ -189,10 +189,14 @@ void lock_pairs(void)
     }
 
 }
-//recursion function
+//lock the pairs, as long as the winner of that pair, is not a loser of a previous pair
+//recursion function: for each pair, check if  [x][winner] is locked as true, if not, lock it as true (this will lock all as true).
+//if yes, check if the loser of that pair (j) is == to the winner of a previous pair (x). if it is, return false
+// if not run checkpair again with winner of previous pair with j, this will effectively go down the list, checking for a matching winner/loser
+//if none exists, return with true
 bool checkPair(i, j)
 {
-    for (int x = 0; x < candidate_count; x ++) //looping through each candidate in ith row
+    for (int x = 0; x < candidate_count; x ++) //looping through each candidate in ith row. 
     {
         if (locked[x][i]) // x == iterator, i stays constant in these iterations
         {
